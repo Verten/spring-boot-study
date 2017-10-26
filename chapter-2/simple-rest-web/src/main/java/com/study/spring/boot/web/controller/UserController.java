@@ -22,11 +22,11 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private static Map<Long, User> userList = Collections.synchronizedMap(new HashMap<>());
+    private static Map<Long, User> userMap = Collections.synchronizedMap(new HashMap<>());
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public List<User> getUsersList() {
-        List<User> users = new ArrayList<>(userList.values());
+        List<User> users = new ArrayList<>(userMap.values());
         return users;
     }
 
@@ -38,24 +38,29 @@ public class UserController {
         user.setId(id);
         user.setName(name);
         user.setAge(age);
-        userList.put(id, user);
+        userMap.put(id, user);
         return "success";
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public User getUser(@PathVariable("id") Long id) {
-        return userList.get(id);
+        return userMap.get(id);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public String updateUser(){
-
+    public String updateUser(@PathVariable("id") Long id,
+                             @RequestParam("name") String name,
+                             @RequestParam("age") Integer age) {
+        User user = userMap.get(id);
+        user.setName(name);
+        user.setAge(age);
+        userMap.put(id, user);
         return "success";
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String deleteUser(@PathVariable("id") Long id){
-        userList.remove(id);
+    public String deleteUser(@PathVariable("id") Long id) {
+        userMap.remove(id);
         return "success";
     }
 
